@@ -3,7 +3,15 @@
 <h1>Blazor WASM Learning!</h1>
 
 <h1>Data Grid Demo</h1>
-<DataGridComponent TItem="Employee" DataItems="employeesList" Columns="columnDefinitions"></DataGridComponent>
+<DataGridComponent TItem="Employee" DataItems="employeesList" 
+                   Columns="columnDefinitions"
+                   Paging="@(new PagingConfig {
+                                 Enabaled=true,
+                                 CustomPager=false,
+                                 PageSize=3
+                             })">
+
+</DataGridComponent>
 
 
 <br />
@@ -230,6 +238,34 @@ Grid Box Demo
                             Title="Tester",
                             Department="QA",
                             Salary=750000,
+                            EmploymentDate=DateTime.Now
+
+                        },
+                        new Employee
+                        {
+                            Name="Tahir",
+                            Title="Designer",
+                            Department="Front End",
+                            Salary=750000,
+                            EmploymentDate=DateTime.Now
+
+                        }
+                        ,
+                         new Employee
+                        {
+                            Name="Asad",
+                            Title="Team Lead",
+                            Department="IT",
+                            Salary=850000,
+                            EmploymentDate=DateTime.Now
+
+                        },
+                          new Employee
+                        {
+                            Name="Sajjad",
+                            Title="Lecturer",
+                            Department="Education",
+                            Salary=150000,
                             EmploymentDate=DateTime.Now
 
                         }
