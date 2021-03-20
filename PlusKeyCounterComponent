@@ -1,0 +1,21 @@
+<input  @onkeypress="KeyHandler" @onkeypress:preventDefault />
+
+@code {
+    public int count { get; set; }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        count = 0;
+    }
+    [Parameter]
+    public EventCallback<int> KeyPressed { get; set; }
+    public Task KeyHandler(KeyboardEventArgs e)
+    {
+        if (e.Key == "+")
+        {
+            count++;
+        }
+        return KeyPressed.InvokeAsync(count);
+    }
+
+}
