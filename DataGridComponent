@@ -1,0 +1,77 @@
+@typeparam TItem
+
+<table border="1">
+    <thead>
+        <tr>
+            @if(Columns==null || Columns.Count<0)
+            {
+                //Reflection Code here
+            }
+            else
+            {
+                @foreach (var column in Columns)
+                {
+                    <th>@column.Caption</th>
+                }
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in DataItems)
+        {
+        <tr>
+            @foreach (var column in Columns)
+            {
+                @if (!string.IsNullOrWhiteSpace(column.Format) && column.DataType != DataType.NotSet)
+                {
+                    string value = string.Empty;
+                    switch (column.DataType)
+                    {
+                        case DataType.Date:
+                            value = DateTime.Parse(typeof(TItem).GetProperty(column.DataField).GetValue(item).ToString()).ToString(column.Format);
+                            break;
+                        case DataType.Currency:
+                            value = double.Parse(typeof(TItem).GetProperty(column.DataField).GetValue(item).ToString()).ToString(column.Format);
+
+                            break;
+                    }
+                    @if (column.Alignment != Alignment.NotSet)
+                    {
+                        <td align="@column.Alignment.ToString().ToLower()">@value</td>
+                    }
+                    else
+                    {
+                        <td>@value</td>
+
+                    }
+
+                }
+                else
+                {
+                    @if (column.Alignment != Alignment.NotSet)
+                    {
+                        <td align="@column.Alignment.ToString().ToLower()">@typeof(TItem).GetProperty(column.DataField).GetValue(item)</td>
+                    }
+                    else
+                    {
+                        <td>@typeof(TItem).GetProperty(column.DataField).GetValue(item)</td>
+
+                    }
+                }
+
+
+
+            }
+        </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+                    [Parameter]
+                    public List<TItem> DataItems { get; set; }
+
+                    [Parameter]
+                    public List<ColumnDefinition> Columns { get; set; }
+
+                }
