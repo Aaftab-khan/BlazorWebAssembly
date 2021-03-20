@@ -1,0 +1,247 @@
+@page "/testIndex"
+
+<h1>Blazor WASM Learning!</h1>
+
+<h1>Data Grid Demo</h1>
+<DataGridComponent TItem="Employee" DataItems="employeesList" Columns="columnDefinitions"></DataGridComponent>
+
+
+<br />
+<br />
+<h1>
+Grid Box Demo
+</h1>
+<GridAutoComponent Items="Games" ColumnsToExcludeCSV="GameId"></GridAutoComponent>
+<GridAutoComponent Items="Films" ColumnsToExcludeCSV="ImagePath,YearReleased"></GridAutoComponent>
+<br />
+<br />
+<h1>
+    Repeater Demo
+</h1>
+<RepeaterComponent @ref="Repeater" Items="Games">
+
+    <Header>
+        <h2>Customer</h2>
+    </Header>
+    <Row Context="games">
+        <div>
+            @games.GameId
+            <button @onclick="@(() =>{
+                                  EditGame(games);
+                              })">
+                Edit Game
+            </button>
+        </div>
+
+        <div>
+            @games.GameName
+        </div>
+
+
+    </Row>
+    <Footer>
+      <div>2021</div>  
+    </Footer>
+
+    <EditTemplate Context="currentGame">
+        <text>Game Name </text>
+        <input type="text" @bind-value="currentGame.GameName" />
+    </EditTemplate>
+</RepeaterComponent>
+
+
+<br />
+<br />
+
+<h1>List Box Demo</h1>
+    <TemplateComponent Items="@Games" TItem="Game" CSSClasses="list-group" ValueChanged="HandleDropDownItem" InputChanged="HandleSearchTerm">
+        <ItemTemplate Context="game">
+
+            <option value="@game.GameId" class="list-group-item">@game.GameName</option>
+        </ItemTemplate>
+    </TemplateComponent>
+    <br />
+    <TemplateComponent Items="@Films" TItem="Film" CSSClasses="list-group" ValueChanged="HandleFilmDropDownItem" InputChanged="HandleFilmSearchTerm">
+        <ItemTemplate Context="film">
+
+            <option value="@film.YearReleased" class="list-group-item">@film.YearReleased</option>
+        </ItemTemplate>
+    </TemplateComponent>
+
+
+    @code{
+
+        public string GameId = "GameId";
+        public string GameName = "GameName";
+        public List<Game> Games = new List<Game>() {
+                        new Game(){ GameId = 1, GameName="Cricket"},
+                        new Game(){ GameId = 2, GameName="Football"},
+                        new Game(){ GameId = 3, GameName="VollyBall"},
+                        new Game(){ GameId = 4, GameName="Hockey"},
+                        new Game(){ GameId = 5, GameName="Swimming"},
+                        new Game(){ GameId = 6, GameName="Cycling"}
+                    };
+        public List<Film> Films { get; set; } = new List<Film> {
+            new Film("Pulp Fiction", "1994", "pulp-fiction.jpg"),
+            new Film("Bad Boys II", "2003", "bad-boys2.jpg"),
+            new Film("The Fast and the Furious", "2001", "tfatf.jpg"),
+            new Film("The Greatest Showman", "2017", "greatest-showman.jpg")
+          };
+
+
+
+        private void HandleDropDownItem(string str)
+        {
+            Console.WriteLine("Selected Item Value:= " + str);
+        }
+
+        private void HandleSearchTerm(string str)
+        {
+            Console.WriteLine("Input Value:= " + str);
+            if (!String.IsNullOrEmpty(str))
+            {
+                Games = Games.FindAll(e => e.GameName.Equals(str));
+            }
+            else
+            {
+                Games = new List<Game>() {
+                        new Game(){ GameId = 1, GameName="Cricket"},
+                        new Game(){ GameId = 2, GameName="Football"},
+                        new Game(){ GameId = 3, GameName="VollyBall"},
+                        new Game(){ GameId = 4, GameName="Hockey"},
+                        new Game(){ GameId = 5, GameName="Swimming"},
+                        new Game(){ GameId = 6, GameName="Cycling"}
+                    };
+            }
+        }
+
+        private void HandleFilmDropDownItem(string str)
+        {
+            Console.WriteLine("Selected Item Value:= " + str);
+        }
+        private void HandleFilmSearchTerm(string str)
+        {
+            Console.WriteLine("Input Value:= " + str);
+            if (!String.IsNullOrEmpty(str))
+            {
+                Films = Films.FindAll(e => e.Title.ToLower().Contains(str.ToLower()));
+            }
+            else
+            {
+                Films = new List<Film> {
+            new Film("Pulp Fiction", "1994", "pulp-fiction.jpg"),
+            new Film("Bad Boys II", "2003", "bad-boys2.jpg"),
+            new Film("The Fast and the Furious", "2001", "tfatf.jpg"),
+            new Film("The Greatest Showman", "2017", "greatest-showman.jpg")
+          };
+            }
+        }
+
+        //Repeater Component Related Code
+
+        private RepeaterComponent<Game> Repeater;
+
+        private void EditGame(Game game)
+        {
+            Repeater.ItemToEdit = game;
+        }
+
+        private List<Employee> employeesList;
+        private List<ColumnDefinition> columnDefinitions;
+        class Employee
+        {
+            public string Name { get; set; }
+            public string Title { get; set; }
+            public string Department { get; set; }
+            public DateTime EmploymentDate { get; set; }
+            public int Salary { get; set; }
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            initialize();
+
+        }
+
+        private void initialize()
+        {
+            if (columnDefinitions == null)
+            {
+                columnDefinitions = new List<ColumnDefinition>();
+                columnDefinitions.AddRange(new ColumnDefinition[]
+                {
+                    new ColumnDefinition{DataField="Name",Caption="Name"},
+                     new ColumnDefinition{DataField="Title",Caption="Title"},
+                    new ColumnDefinition{DataField="Department",Caption="Department"},
+                    new ColumnDefinition{DataField="Salary",Caption="Salary",Alignment=Alignment.Right,DataType=DataType.Currency,Format="c"},
+                new ColumnDefinition{DataField="EmploymentDate",Caption="Employment Date",Format="yyyy/MM/dd",DataType=DataType.Date},
+
+                });
+
+                if (employeesList == null)
+                {
+                    employeesList = new List<Employee>();
+                    employeesList.AddRange(new Employee[]{
+                        new Employee
+                        {
+                            Title="Software Engineer",
+                            Name="Ali",
+                            
+                            Department="IT",
+                            Salary=200000,
+                            EmploymentDate=DateTime.Now
+
+                        }
+                        ,
+                        new Employee
+                        {
+                            Name="Ahmed",
+                            Title="Accountant",
+                            Department="Finance",
+                            Salary=150000,
+                            EmploymentDate=DateTime.Now
+
+                        }
+                        ,
+                        new Employee
+                        {
+                            Name="Ubaid",
+                            Title="Lecturer",
+                            Department="Education",
+                            Salary=175000,
+                            EmploymentDate=DateTime.Now
+
+                        }
+                         ,
+                        new Employee
+                        {
+                            Name="Shahbaz",
+                            Title="Data Scientist",
+                            Department="AI",
+                            Salary=350000,
+                            EmploymentDate=DateTime.Now
+
+                        }
+                        ,
+                        new Employee
+                        {
+                            Name="Faisal",
+                            Title="Tester",
+                            Department="QA",
+                            Salary=750000,
+                            EmploymentDate=DateTime.Now
+
+                        }
+
+                    }
+                        );
+                }
+            }
+        }
+}
+
+
+
+
+
