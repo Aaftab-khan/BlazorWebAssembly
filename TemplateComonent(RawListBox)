@@ -1,0 +1,64 @@
+@typeparam TItem
+@if (OptionTextItem != null)
+{
+<p>@OptionTextItem</p>
+}
+
+<input type="text" @oninput="OnInputChanged" class="@CSSClasses" />
+<select @onchange="@OnValueChanged" multiple>
+    @if (OptionTextItem == null)
+    {
+        @foreach (var item in Items)
+        {
+
+            @ItemTemplate(item)
+
+        }
+    }
+
+</select>
+
+
+
+@code {
+    [Parameter]
+    public string CSSClasses { get; set; }
+    [Parameter]
+    public string OptionValueItem { get; set; }
+    [Parameter]
+    public string OptionTextItem { get; set; }
+    [Parameter]
+    public RenderFragment<TItem> ItemTemplate { get; set; }
+
+    [Parameter]
+    public IReadOnlyList<TItem> Items { get; set; }
+
+
+    [Parameter]
+    public EventCallback<string> InputChanged
+    {
+        get;
+        set;
+    }
+
+    private Task OnInputChanged(ChangeEventArgs e)
+    {
+        string Value = e.Value.ToString();
+        return InputChanged.InvokeAsync(Value);
+    }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged
+    {
+        get;
+        set;
+    }
+
+    private Task OnValueChanged(ChangeEventArgs e)
+    {
+        string Value = e.Value.ToString();
+        return ValueChanged.InvokeAsync(Value);
+    }
+
+
+}
