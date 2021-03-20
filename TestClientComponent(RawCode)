@@ -1,0 +1,134 @@
+
+
+
+<h1>Blazor WASM Learning!</h1>
+
+
+<input id="useIndividualParams"
+       maxlength="@maxlength"
+       placeholder="@placeholder"
+       required="@required"
+       size="@size" />
+
+<input id="useAttributesDict"
+       @attributes="InputAttributes" />
+
+<CustomDropDown ValueChanged="HandleValueChange" GameData="data"></CustomDropDown>
+
+@code {
+    public string maxlength = "10";
+    public string placeholder = "Input placeholder text1";
+    public string required = "required";
+    public string size = "50";
+
+    public Dictionary<string, object> InputAttributes { get; set; } =
+        new Dictionary<string, object>()
+        {
+                    { "maxlength", "20" },
+                    { "placeholder", "Input placeholder text2" },
+                    { "required", "required" },
+                    { "size", "70" }
+                                };
+}
+<CapturingUnexpectedParams src="https://randomuser.me/api/portraits/lego/6.jpg" alt="A photo of Emmet" width="200" height=200 />
+<PasswordBox PasswordChanged="ChangePasswordHandler"></PasswordBox>
+<DatePicker DateSelected="onDateSelected"></DatePicker>
+<h4>Selected Date:@SelectedDate.ToString("dd-MMM-yyyy")</h4>
+<h3>@message</h3>
+<h4>Count: @plusKeyCount</h4>
+<ClickComponent Click="OnClicked" />
+<SpecialKeyCounter KeyPressed="HandlePlusCount" />
+
+
+
+<TemplateComponent Items="@data" TItem="Game" CSSClasses="list-group" ValueChanged="HandleDropDownItem" InputChanged="HandleSearchTerm">
+    <ItemTemplate Context="game">
+
+        <option value="@game.GameId" class="list-group-item">@game.GameName</option>
+    </ItemTemplate>
+</TemplateComponent>
+<br />
+<TemplateComponent Items="@Films" TItem="Film" ValueChanged="HandleFilmDropDownItem" InputChanged="HandleFilmSearchTerm">
+    <ItemTemplate Context="film">
+
+        <option value="@film.Title">@film.YearReleased</option>
+    </ItemTemplate>
+</TemplateComponent>
+
+
+@code{
+    public string password { get; set; }
+    public string GameId;
+    public List<Game> data = new List<Game>() {
+                        new Game(){ GameId = 1, GameName="Cricket"},
+                        new Game(){ GameId = 2, GameName="Football"},
+                        new Game(){ GameId = 3, GameName="VollyBall"},
+                        new Game(){ GameId = 4, GameName="Hockey"},
+                        new Game(){ GameId = 5, GameName="Swimming"},
+                        new Game(){ GameId = 6, GameName="Cycling"}
+                    };
+    public List<Film> Films { get; set; } = new List<Film> {
+            new Film("Pulp Fiction", "1994", "pulp-fiction.jpg"),
+            new Film("Bad Boys II", "2003", "bad-boys2.jpg"),
+            new Film("The Fast and the Furious", "2001", "tfatf.jpg"),
+            new Film("The Greatest Showman", "2017", "greatest-showman.jpg")
+          };
+    int plusKeyCount;
+    string message = "Hello from ParentComponent";
+
+    void OnClicked(MouseEventArgs e)
+    {
+        message = "Clicked";
+    }
+    void HandlePlusCount(int count)
+    {
+        plusKeyCount = count;
+    }
+    public DateTime SelectedDate { get; set; }
+
+    public void onDateSelected(DateTime dt)
+    {
+        SelectedDate = dt;
+    }
+    void ChangePasswordHandler(string Password)
+    {
+        password = Password;
+        Console.WriteLine(password);
+    }
+    private void HandleValueChange(string str)
+    {
+        GameId = str;
+        Console.WriteLine(GameId);
+    }
+
+    private void HandleDropDownItem(string str)
+    {
+        Console.WriteLine("Selected Item Value:= " + str);
+    }
+    private void HandleSearchTerm(string str)
+    {
+        Console.WriteLine("Input Value:= " + str);
+        data = new List<Game>() {
+
+                        new Game(){ GameId = 2, GameName="Football"},
+                        new Game(){ GameId = 3, GameName="VollyBall"}
+                    };
+    }
+
+    private void HandleFilmDropDownItem(string str)
+    {
+        Console.WriteLine("Selected Item Value:= " + str);
+    }
+    private void HandleFilmSearchTerm(string str)
+    {
+        Console.WriteLine("Input Value:= " + str);
+        Films = new List<Film> {
+            new Film("Pulp Fiction", "1994", "pulp-fiction.jpg"),
+            new Film("Bad Boys II", "2003", "bad-boys2.jpg")
+          };
+    }
+
+}
+
+
+
